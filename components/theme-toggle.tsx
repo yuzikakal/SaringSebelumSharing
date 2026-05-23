@@ -22,7 +22,7 @@ export function ThemeToggle() {
         aria-label="Toggle theme"
         disabled
       >
-        <Sun className="h-5 w-5" />
+        <Sun className="h-5 w-5 text-slate-400" />
       </Button>
     )
   }
@@ -37,9 +37,9 @@ export function ThemeToggle() {
       title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {theme === 'dark' ? (
-        <Sun className="h-5 w-5 text-slate-400 hover:text-slate-100" />
+        <Sun className="h-5 w-5 text-slate-300 hover:text-slate-100 transition-colors" />
       ) : (
-        <Moon className="h-5 w-5 text-slate-600 hover:text-slate-900" />
+        <Moon className="h-5 w-5 text-slate-600 hover:text-slate-900 transition-colors" />
       )}
     </Button>
   )

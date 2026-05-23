@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
@@ -9,12 +9,19 @@ import Footer from '@/components/footer'
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: '#020617' },
+  ],
+  // colorScheme: 'light dark', 
+}
+
 export const metadata: Metadata = {
   title: 'Saring Sebelum Sharing - Cek Hoaks & Jadilah Netizen Bijak',
   description: 'Platform edukasi digital tentang Pancasila Sila ke-3 dan deteksi hoaks. Pelajari pentingnya saring informasi sebelum membagikan di media sosial.',
   keywords: ['hoaks', 'fakta', 'Pancasila', 'digital', 'netizen', 'saring'],
   authors: [{ name: 'Saring Sebelum Sharing' }],
-  colorScheme: 'light dark',
   icons: {
     icon: [
       { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },

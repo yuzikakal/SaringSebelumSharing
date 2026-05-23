@@ -1,266 +1,295 @@
-import { MessageCircle, Repeat2, AlertCircle } from 'lucide-react'
+'use client'
+
+import { motion } from 'framer-motion'
+import { MessageCircle, AlertCircle, Repeat2, Brain, Zap, Users, ShieldAlert } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function FenomenaPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900">
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
         {/* Header */}
-        <div className="mb-12 text-center space-y-4">
-          <h1 className="text-4xl sm:text-5xl font-bold text-slate-100">
+        <div className="mb-16 text-center space-y-4">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5 }}
+            className="text-sm font-semibold text-red-600 dark:text-red-400 uppercase tracking-widest"
+          >
+            Psikologi & Algoritma
+          </motion.p>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-slate-100"
+          >
             Fenomena Sosial Digital
-          </h1>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-            Pahami dinamika media sosial yang menciptakan hoaks dan ujaran kebencian
-          </p>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto"
+          >
+            Bhinneka Tunggal Ika seharusnya memperkaya, bukan memecah belah. Pahami bagaimana algoritma dan krisis etika mengubah perbedaan menjadi radikalisme digital yang mengancam Persatuan Indonesia.
+          </motion.p>
         </div>
 
         {/* Echo Chamber Section */}
-        <section className="mb-12">
+        <section className="mb-20">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-slate-100">
-                Ruang Gema (Echo Chamber)
-              </h2>
-              <p className="text-slate-300 leading-relaxed">
-                Di media sosial, algoritma memprioritaskan konten yang sesuai dengan preferensi kita. 
-                Ini menciptakan &quot;ruang gema&quot; di mana kita hanya melihat opini yang sejalan dengan pandangan kita.
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ duration: 0.6 }}
+              className="space-y-5"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-red-100 dark:bg-red-950 rounded-lg">
+                  <Brain className="w-6 h-6 text-red-600 dark:text-red-400" />
+                </div>
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                  Ruang Gema (Echo Chamber)
+                </h2>
+              </div>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                Algoritma media sosial dirancang untuk membuat kita betah berlama-lama dengan menyuapi konten yang sesuai dengan bias kita. Lambat laun, kita terisolasi dalam &quot;filter bubble&quot; dan kehilangan empati terhadap kelompok lain.
               </p>
-              <ul className="space-y-3 text-slate-300">
-                <li className="flex gap-3">
-                  <span className="text-red-500 font-bold">•</span>
-                  <span>Kita tidak terekspos pada perspektif berbeda</span>
+              <ul className="space-y-3 text-slate-600 dark:text-slate-300">
+                <li className="flex gap-3 items-start">
+                  <Zap className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <span>Bias konfirmasi dimanipulasi: kita hanya percaya apa yang ingin kita percaya</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="text-red-500 font-bold">•</span>
-                  <span>Keyakinan kita diperkuat terus-menerus</span>
+                <li className="flex gap-3 items-start">
+                  <Zap className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <span>Kehilangan empati: kelompok lain dianggap musuh, bukan saudara sebangsa</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="text-red-500 font-bold">•</span>
-                  <span>Muncul polarisasi dan intoleransi terhadap pihak lain</span>
+                <li className="flex gap-3 items-start">
+                  <Zap className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <span>Radikalisme digital: pandangan moderat tenggelam oleh suara ekstrem yang paling keras</span>
                 </li>
               </ul>
-            </div>
+            </motion.div>
 
-            <Card className="bg-slate-900 border-slate-800">
-              <CardHeader className="bg-slate-800">
-                <CardTitle className="flex items-center gap-2 text-slate-100">
-                  <MessageCircle className="w-5 h-5 text-red-500" />
-                  Simulasi Ruang Gema
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-3">
-                <div className="bg-white dark:bg-slate-950 rounded-lg p-4 border-l-4 border-red-500">
-                  <p className="text-sm font-semibold text-red-400">Anda menyukai post ini</p>
-                  <p className="text-slate-300 text-sm mt-1">Jadwal Pilkada tidak adil...</p>
-                  <p className="text-xs text-slate-500 mt-2">❤️ 5.2K • 💬 892 • 🔄 1.2K</p>
-                </div>
-                <div className="text-xs text-slate-400 text-center">⬇️</div>
-                <div className="bg-white dark:bg-slate-950 rounded-lg p-4 border-l-4 border-red-500">
-                  <p className="text-sm font-semibold text-red-400">Rekomendasi serupa</p>
-                  <p className="text-slate-300 text-sm mt-1">Alasan tersembunyi di balik...</p>
-                  <p className="text-xs text-slate-500 mt-2">❤️ 8.9K • 💬 1.2K • 🔄 3.1K</p>
-                </div>
-                <div className="text-xs text-slate-400 text-center">⬇️</div>
-                <div className="bg-red-950/30 rounded-lg p-4 border-l-4 border-amber-500">
-                  <p className="text-sm font-semibold text-amber-400">Terus diperkuat</p>
-                  <p className="text-slate-300 text-sm mt-1">Penipuan sistematis yang...</p>
-                  <p className="text-xs text-slate-500 mt-2">❤️ 15K • 💬 3.2K • 🔄 8.5K</p>
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ duration: 0.6 }}
+            >
+              <Card className="bg-white border-slate-200 shadow-lg dark:bg-slate-900 dark:border-slate-800 dark:shadow-none overflow-hidden">
+                <CardHeader className="border-b border-slate-200 dark:border-slate-800">
+                  <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base">
+                    <MessageCircle className="w-5 h-5 text-red-500" />
+                    Simulasi Algoritma di Timeline Anda
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4 space-y-3 p-6">
+                  <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">Anda menyukai post ini</p>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm">Kebijakan pemerintah ini merugikan rakyat kecil...</p>
+                    <p className="text-xs text-slate-400 mt-2">❤️ 5.2K • 💬 892</p>
+                  </div>
+                  <div className="border-l-2 border-dashed border-slate-300 dark:border-slate-700 ml-4 h-4"></div>
+                  {/* Kartu provokatif tanpa animasi pulse, cuma warna merah menyala */}
+                  <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border-2 border-red-500 dark:border-red-500 shadow-md">
+                    <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-1">🔥 Rekomendasi Algoritma (Lebih Provokatif)</p>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm">Skandal alasan tersembunyi di balik kebijakan...</p>
+                    <p className="text-xs text-slate-400 mt-2">❤️ 15K • 💬 3.2K</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </section>
 
-        {/* Cyber Bullying Section */}
-        <section className="mb-12">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <Card className="bg-slate-900 border-slate-800 lg:order-2">
-              <CardHeader className="bg-slate-800">
-                <CardTitle className="flex items-center gap-2 text-slate-100">
-                  <AlertCircle className="w-5 h-5 text-orange-500" />
-                  Contoh Perdebatan Sengit
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-3">
-                <div className="bg-white dark:bg-slate-950 rounded-lg p-3 border-l-4 border-blue-500">
-                  <p className="text-xs font-semibold text-blue-400">@netizen123</p>
-                  <p className="text-slate-300 text-sm mt-1">Saya tidak setuju dengan...</p>
+        {/* Comment War Section */}
+        <section className="mb-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ duration: 0.6 }}
+              className="lg:order-2 space-y-5"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange-100 dark:bg-orange-950 rounded-lg">
+                  <AlertCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                 </div>
-
-                <div className="bg-white dark:bg-slate-950 rounded-lg p-3 border-l-4 border-red-500">
-                  <p className="text-xs font-semibold text-red-400">@counter_view</p>
-                  <p className="text-slate-300 text-sm mt-1">Kalau tidak setuju berarti kamu...</p>
-                </div>
-
-                <div className="bg-red-950/30 rounded-lg p-3 border-l-4 border-red-500">
-                  <p className="text-xs font-semibold text-red-400">@netizen123</p>
-                  <p className="text-slate-300 text-sm mt-1">Aku kena serangan massal...</p>
-                  <p className="text-xs text-orange-400 mt-1">Dilike 12K orang 😞</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="lg:order-1 space-y-4">
-              <h2 className="text-3xl font-bold text-slate-100">
-                Perdebatan Tanpa Fakta
-              </h2>
-              <p className="text-slate-300 leading-relaxed">
-                Ketika seseorang mengungkapkan pendapat di media sosial, sering kali mereka mendapat serangan 
-                dari kelompok yang berbeda pandangan. Perdebatan berubah menjadi saling hujat tanpa dasar faktual.
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                  Perdebatan Tanpa Etika
+                </h2>
+              </div>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                Perbedaan pandangan adalah wajah demokrasi. Namun, ketika ego mengambil alih dan etika ditinggalkan, perdebatan berubah menjadi ujaran kebencian. Ini adalah kegagalan total dalam menerapkan nilai kemanusiaan dan persatuan.
               </p>
-              <ul className="space-y-3 text-slate-300">
-                <li className="flex gap-3">
-                  <span className="text-orange-500 font-bold">•</span>
-                  <span>Argumentasi diganti dengan ejekan dan ancaman</span>
+              <ul className="space-y-3 text-slate-600 dark:text-slate-300">
+                <li className="flex gap-3 items-start">
+                  <ShieldAlert className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                  <span><strong>Ad Hominem:</strong> Menyerang karakter pribadi, bukan substansi argumen</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="text-orange-500 font-bold">•</span>
-                  <span>Orang yang berbeda pendapat dikelompokkan sebagai musuh</span>
+                <li className="flex gap-3 items-start">
+                  <ShieldAlert className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                  <span><strong>Doxxing & Cancel Culture:</strong> Membongkar privasi dan menghakimi massa secara sepihak</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="text-orange-500 font-bold">•</span>
-                  <span>Hoaks dipercaya karena sejalan dengan emosi kita</span>
+                <li className="flex gap-3 items-start">
+                  <ShieldAlert className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                  <span><strong>Toleransi Semu:</strong> Hanya toleran pada yang sependapat, memusuji yang berbeda</span>
                 </li>
               </ul>
-            </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ duration: 0.6 }}
+              className="lg:order-1"
+            >
+              <Card className="bg-white border-slate-200 shadow-lg dark:bg-slate-900 dark:border-slate-800 dark:shadow-none overflow-hidden">
+                <CardHeader className="border-b border-slate-200 dark:border-slate-800">
+                  <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base">
+                    <Users className="w-5 h-5 text-orange-500" />
+                    Pola Perdebatan Toksik
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4 space-y-3 p-6">
+                  <div className="bg-white dark:bg-slate-900 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">@warga_bijak</p>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm mt-1">Kasus bullying kemarin seharusnya diselesaikan lewat jalur hukum, bukan sekadar minta maaf di video...</p>
+                  </div>
+                  <div className="bg-white dark:bg-slate-900 rounded-lg p-3 border border-red-200 dark:border-red-900">
+                    <p className="text-xs font-semibold text-red-500 dark:text-red-400">@provokator_x</p>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm mt-1">Halah sok suci lu! Paling lu juga di kampus sering ngebully orang kan? Muka lu aja muka pembantu!</p>
+                  </div>
+                  <div className="bg-red-50 dark:bg-red-950/40 rounded-lg p-3 border border-red-300 dark:border-red-800">
+                    <p className="text-xs font-semibold text-red-600 dark:text-red-400">@warga_bijak</p>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm mt-1">Saya kena serangan massal dan di-tag sebagai &quot;antek&quot; padahal cuma kasih data...</p>
+                    <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 font-semibold">🔥 12K orang membenarkan serangan ini</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </section>
 
-        {/* Viral Spread Section */}
-        <section className="mb-12">
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-slate-100 text-center">
-              Penyebaran Hoaks Berantai
-            </h2>
-            <Card className="bg-slate-900 border-slate-800">
-              <CardHeader className="bg-slate-800">
-                <CardTitle className="flex items-center gap-2 text-slate-100">
-                  <Repeat2 className="w-5 h-5 text-amber-500" />
-                  Siklus Penyebaran Hoaks
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  {[
-                    {
-                      step: '1',
-                      title: 'Konten Diproduksi',
-                      desc: 'Hoaks dibuat untuk mendapat engagement atau profit dari iklan',
-                      color: 'border-red-500 bg-red-950/20',
-                    },
-                    {
-                      step: '2',
-                      title: 'Viral ke Grup Komunitas',
-                      desc: 'Dibagikan di grup WhatsApp/Telegram tanpa verifikasi',
-                      color: 'border-orange-500 bg-orange-950/20',
-                    },
-                    {
-                      step: '3',
-                      title: 'Orang Tua & Keluarga',
-                      desc: 'Menyebar ke generasi lebih tua yang kurang kritis',
-                      color: 'border-amber-500 bg-amber-950/20',
-                    },
-                    {
-                      step: '4',
-                      title: 'Kembali ke Media Sosial',
-                      desc: 'Orang lain menangkap dan membagikan lagi di platform publik',
-                      color: 'border-yellow-500 bg-yellow-950/20',
-                    },
-                    {
-                      step: '5',
-                      title: 'Percaya & Berbagi Lagi',
-                      desc: 'Jutaan orang percaya dan membagikan tanpa verifikasi',
-                      color: 'border-red-600 bg-red-950/30',
-                    },
-                  ].map((item, idx) => (
-                    <div key={idx}>
-                      <div className={`border-l-4 rounded-r-lg p-4 ${item.color}`}>
-                        <div className="flex items-start gap-4">
-                          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 text-sm font-bold text-slate-100">
-                            {item.step}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-slate-100">{item.title}</h4>
-                            <p className="text-slate-300 text-sm mt-1">{item.desc}</p>
-                          </div>
-                        </div>
+        {/* Siklus Penyebaran Hoaks */}
+        <section className="mb-20">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }} 
+            transition={{ duration: 0.6 }}
+            className="space-y-10"
+          >
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                Anatomi Penyebaran Hoaks
+              </h2>
+              <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Hoaks bukan kesalahan tunggal. Ia adalah virus yang memanfaatkan algoritma, emosi manusia, dan jaringan komunitas untuk menginfeksi persatuan bangsa.
+              </p>
+            </div>
+
+            <div className="relative">
+              <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-700 dark:from-red-900 dark:via-orange-900 dark:to-red-950 -translate-y-1/2 z-0 rounded-full"></div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+                {[
+                  {
+                    step: '01',
+                    icon: <Repeat2 className="w-7 h-7" />,
+                    title: 'Fabrikasi & Modus',
+                    desc: 'Hoaks diciptakan dengan muatan SARA atau emosi marah. Motifnya jelas: profit iklan (clickbait) atau kepentingan politik pemecah belah.',
+                    color: 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950 border-red-500'
+                  },
+                  {
+                    step: '02',
+                    icon: <Users className="w-7 h-7" />,
+                    title: 'Amplifikasi Buzzer',
+                    desc: 'Disuntikkan ke grup WhatsApp/Telegram massa. Menggunakan akun bot atau buzzer untuk menciptakan ilusi "banyak orang setuju" (Social Proof).',
+                    color: 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950 border-red-500'
+                  },
+                  {
+                    step: '03',
+                    icon: <Brain className="w-7 h-7" />,
+                    title: 'Emosi Membutakan',
+                    desc: 'Rasa takut atau marah memicu "System 1 Thinking" di otak. Korban membagikan tanpa baca selengkapnya karena emosi sudah ditulari (Emotional Contagion).',
+                    color: 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950 border-red-500'
+                  },
+                  {
+                    step: '04',
+                    icon: <ShieldAlert className="w-7 h-7" />,
+                    title: 'Disrupsi Persatuan',
+                    desc: 'Berujung pada polarisasi akut, saling curiga antar-kelompok masyarakat, hingga aksi kekerasan nyata. Sila ke-3 runtuh dalam sekejap.',
+                    color: 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950 border-red-500'
+                  }
+                ].map((item, idx) => (
+                  <div key={idx}>
+                    <div className={`bg-white dark:bg-slate-900 border-2 ${item.color.split(' ').pop()} shadow-lg dark:shadow-none rounded-xl p-6 h-full flex flex-col items-center text-center space-y-3 transition-transform hover:scale-105 duration-300`}>
+                      <div className={`w-14 h-14 rounded-full ${item.color} flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-md`}>
+                        {item.icon}
                       </div>
-                      {idx < 4 && <div className="text-center text-slate-500 py-2">⬇️</div>}
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{item.title}</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* Dampak Nyata Section */}
         <section>
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-slate-100 text-center mb-6">
-              Dari Dunia Digital ke Dunia Nyata
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }} 
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">
+              Dari Layar Kaca ke Luka Nyata
             </h2>
-            <p className="text-slate-300 leading-relaxed text-center max-w-3xl mx-auto mb-8">
-              Hoaks yang beredar di media sosial tidak hanya menyebabkan kerusakan digital. 
-              Informasi palsu telah memicu kekerasan antar komunitas, merusak kepercayaan publik terhadap lembaga, 
-              dan menciptakan polarisasi yang sulit dipulihkan. Berikut adalah contoh nyata dampak hoaks:
+            <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-center max-w-3xl mx-auto mb-8">
+              Tidak semua perilaku buruk di internet berujung pada penjara, namun hampir semua meninggalkan luka bagi kemanusiaan. Hoaks telah memicu kekerasan, merusak kepercayaan, dan menciptakan perpecahan yang bertentangan dengan nilai Persatuan Indonesia.
             </p>
 
             <div className="grid md:grid-cols-3 gap-6">
-              <Card className="bg-slate-900 border-slate-800 hover:border-red-500 transition-all">
-                <CardHeader>
-                  <CardTitle className="text-slate-100 flex items-center gap-2">
-                    <span className="text-2xl">⚠️</span> Kekerasan Komunitas
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    Hoaks tentang penistaan agama telah memicu serangan massal terhadap individu atau kelompok tertentu, 
-                    menyebabkan luka, hilangnya nyawa, dan trauma berkepanjangan dalam komunitas.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-slate-900 border-slate-800 hover:border-amber-500 transition-all">
-                <CardHeader>
-                  <CardTitle className="text-slate-100 flex items-center gap-2">
-                    <span className="text-2xl">🏛️</span> Krisis Kepercayaan
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    Hoaks tentang institusi pemerintah atau kesehatan telah merusak kepercayaan publik. 
-                    Masyarakat menjadi ragu terhadap vaksinasi, program pemerintah, dan informasi resmi lainnya.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-slate-900 border-slate-800 hover:border-orange-500 transition-all">
-                <CardHeader>
-                  <CardTitle className="text-slate-100 flex items-center gap-2">
-                    <span className="text-2xl">💔</span> Disintegrasi Sosial
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    Polarisasi akibat hoaks menciptakan perpecahan dalam keluarga, persahabatan, dan komunitas. 
-                    Orang yang dahulu bersatu kini saling curiga dan menjadi musuh karena percaya informasi berbeda.
-                  </p>
-                </CardContent>
-              </Card>
+              {[
+                { emoji: '⚠️', title: 'Kekerasan Komunitas', desc: 'Hoaks SARA memicu serangan massal di dunia nyata, menyebabkan luka fisik dan trauma berkepanjangan yang merusak kerukunan.', border: 'hover:border-red-500' },
+                { emoji: '🏛️', title: 'Krisis Kepercayaan', desc: 'Hoaks institusional merusak kepercayaan publik pada vaksinasi atau bantuan sosial, membuat masyarakat rentan terhadap bahaya nyata.', border: 'hover:border-amber-500' },
+                { emoji: '💔', title: 'Disintegrasi Sosial', desc: 'Polarisasi memecah keluarga dan komunitas. Sahabat dan kerabat saling curiga hanya karena terjebak narasi hoaks yang berbeda.', border: 'hover:border-orange-500' }
+              ].map((item, idx) => (
+                <Card key={idx} className={`bg-white border-slate-200 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:shadow-none transition-all h-full ${item.border}`}>
+                  <CardHeader>
+                    <CardTitle className="text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      <span className="text-2xl">{item.emoji}</span> {item.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
 
-            <div className="bg-gradient-to-r from-red-950/40 to-slate-900/40 border border-red-500/30 rounded-lg p-6 mt-8">
-              <h3 className="text-xl font-bold text-slate-100 mb-3">Komitmen Kita Bersama</h3>
-              <p className="text-slate-300 leading-relaxed">
-                Dampak hoaks bukan sekadar masalah individu, melainkan ancaman terhadap persatuan Indonesia. 
-                Oleh karena itu, setiap langkah kecil untuk memverifikasi informasi, mengedukasi orang lain, 
-                dan berbicara dengan santun adalah kontribusi nyata untuk menjaga persatuan bangsa kita.
+            <div className="bg-gradient-to-r from-red-50 to-slate-50 border border-red-200 dark:from-red-950/40 dark:to-slate-900/40 dark:border-red-500/30 rounded-lg p-6 mt-8">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">Refleksi Sila ke-3</h3>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                Dampak hoaks adalah bukti nyata bahwa pelanggaran etika digital sama berbahayanya dengan pelanggaran hukum. Menjaga Persatuan Indonesia di era modern bermula dari tanggung jawab moral kita sebelum menekan tombol &quot;Bagikan&quot;. Membaca fenomena ini adalah langkah pertama; mengubah kebiasaan adalah langkah selanjutnya.
               </p>
             </div>
-          </div>
+          </motion.div>
         </section>
+
       </div>
     </div>
   )
