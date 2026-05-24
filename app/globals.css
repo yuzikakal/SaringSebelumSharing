@@ -75,7 +75,6 @@
 }
 
 @theme inline {
-  /* PERBAIKAN DI SINI: Pakai variabel dari Next.js Font */
   --font-sans: var(--font-geist-sans), 'Geist Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), 'Geist Mono Fallback', ui-monospace, SFMono-Regular, monospace;
   
@@ -123,5 +122,41 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Minimalist Scrollbar - Ditaruh di dalam @layer base */
+  .scrollbar-minimal {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 transparent;
+  }
+
+  .scrollbar-minimal::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .scrollbar-minimal::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-minimal::-webkit-scrollbar-thumb {
+    background-color: #94a3b8;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+    background-color: #64748b;
+  }
+
+  .dark .scrollbar-minimal {
+    scrollbar-color: #475569 transparent;
+  }
+
+  .dark .scrollbar-minimal::-webkit-scrollbar-thumb {
+    background-color: #475569;
+  }
+
+  .dark .scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+    background-color: #64748b;
   }
 }

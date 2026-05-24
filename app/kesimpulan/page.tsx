@@ -1,34 +1,45 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Heart, Send, Users } from 'lucide-react'
+import { Heart, Send, Users, Loader2 } from 'lucide-react'
 
 export default function KesimpulanPage() {
   const [pledgeName, setPledgeName] = useState('')
   const [pledges, setPledges] = useState<string[]>([])
   const [submitted, setSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const STORAGE_KEY = 'saringNetizanPledges'
-
-  // Load pledges from localStorage
   useEffect(() => {
+    fetchPledges()
+  }, [])
+
+  const fetchPledges = async () => {
+    setIsLoading(true)
     try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        setPledges(JSON.parse(stored))
+      const { data, error } = await supabase
+        .from('komitmen')
+        .select('nama')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      if (data) {
+        setPledges(data.map((item) => item.nama))
       }
     } catch (error) {
-      console.error('Error loading pledges:', error)
+      console.error('Error fetching pledges:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!pledgeName.trim()) {
@@ -36,80 +47,119 @@ export default function KesimpulanPage() {
       return
     }
 
-    const newPledges = [...pledges, pledgeName.trim()]
-    setPledges(newPledges)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newPledges))
-    setPledgeName('')
-    setSubmitted(true)
+    setIsSubmitting(true)
 
-    setTimeout(() => setSubmitted(false), 3000)
+    try {
+      // Tambahkan .select() agar Supabase merespon dengan data atau error yang detail
+      const { error } = await supabase
+        .from('komitmen')
+        .insert([{ nama: pledgeName.trim() }])
+        .select()
+
+      if (error) {
+        // Log error detail dari Supabase
+        console.error('Supabase Error Details:', error.message, error.details, error.hint)
+        throw error
+      }
+
+      // Update UI locally
+      setPledges([pledgeName.trim(), ...pledges])
+      setPledgeName('')
+      setSubmitted(true)
+
+      setTimeout(() => setSubmitted(false), 3000)
+    } catch (error: any) {
+      console.error('Error submitting pledge:', error)
+      // Tampilkan pesan error asli dari Supabase ke user
+      alert(`Terjadi kesalahan: ${error?.message || 'Silakan coba lagi.'}`)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900">
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900 transition-colors duration-300">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
         {/* Header */}
-        <div className="mb-12 text-center space-y-4">
-          <h1 className="text-4xl sm:text-5xl font-bold text-slate-100">
+        <motion.div
+          className="mb-12 text-center space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-slate-100">
             Kesimpulan & Komitmen
           </h1>
-          <p className="text-lg text-slate-300">
+          <p className="text-lg text-slate-600 dark:text-slate-300">
             Bergabunglah dengan jutaan netizen bijak Indonesia
           </p>
-        </div>
+        </motion.div>
 
         {/* Main Message */}
-        <Card className="bg-gradient-to-r from-slate-800 to-slate-900 border border-red-500/30 mb-12">
-          <CardContent className="pt-8 space-y-6">
-            <div className="space-y-4 text-center">
-              <h2 className="text-3xl font-bold text-slate-100">
-                Apa Yang Telah Kita Pelajari?
-              </h2>
-              <div className="space-y-4 text-slate-300 text-lg leading-relaxed">
-                <p>
-                  Media sosial adalah alat komunikasi yang powerful, namun juga penuh dengan tantangan. 
-                  Algoritma menciptakan ruang gema yang memperkuat bias kita.
-                </p>
-                <p>
-                  Hoaks menyebar lebih cepat daripada kebenaran karena menyentuh emosi. 
-                  Kita yang memiliki kekuatan untuk menghentikan penyebarannya.
-                </p>
-                <p>
-                  Persatuan Indonesia bergantung pada kesantunan digital kita. 
-                  Setiap klik adalah pilihan untuk membangun atau merusak.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-4 pt-4">
-              {[
-                { number: '80%', label: 'Hoaks menyebar 6x lebih cepat' },
-                { number: '67%', label: 'Orang berbagi tanpa verifikasi' },
-                { number: '1M+', label: 'Dampak dari 1 hoaks' },
-              ].map((stat, idx) => (
-                <div key={idx} className="text-center p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                  <div className="text-2xl font-bold text-red-400">{stat.number}</div>
-                  <div className="text-sm text-slate-400 mt-1">{stat.label}</div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mb-12"
+        >
+          <Card className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-red-500/30 shadow-sm dark:shadow-none">
+            <CardContent className="pt-8 space-y-6">
+              <div className="space-y-4 text-center">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                  Apa Yang Telah Kita Pelajari?
+                </h2>
+                <div className="space-y-4 text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                  <p>
+                    Media sosial adalah alat komunikasi yang powerful, namun juga penuh dengan tantangan.
+                    Algoritma menciptakan ruang gema yang memperkuat bias kita.
+                  </p>
+                  <p>
+                    Hoaks menyebar lebih cepat daripada kebenaran karena menyentuh emosi.
+                    Kita yang memiliki kekuatan untuk menghentikan penyebarannya.
+                  </p>
+                  <p>
+                    Persatuan Indonesia bergantung pada kesantunan digital kita.
+                    Setiap klik adalah pilihan untuk membangun atau merusak.
+                  </p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-4 pt-4">
+                {[
+                  { number: '80%', label: 'Hoaks menyebar 6x lebih cepat' },
+                  { number: '67%', label: 'Orang berbagi tanpa verifikasi' },
+                  { number: '1M+', label: 'Dampak dari 1 hoaks' },
+                ].map((stat, idx) => (
+                  <div key={idx} className="text-center p-4 bg-white dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stat.number}</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Pledge Section */}
-        <div className="grid lg:grid-cols-2 gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="grid lg:grid-cols-2 gap-8 mb-12"
+        >
           {/* Pledge Form */}
-          <Card className="bg-slate-900 border-slate-800">
-            <CardHeader className="bg-slate-800">
-              <CardTitle className="flex items-center gap-2 text-slate-100">
+          <Card className="bg-white border-slate-200 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:shadow-none overflow-hidden">
+            <CardHeader className="border-b border-slate-200 dark:border-slate-800">
+              <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
                 <Heart className="w-5 h-5 text-red-500" />
                 Deklarasi Netizen Bijak
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Nama Anda
                   </label>
                   <Input
@@ -117,13 +167,14 @@ export default function KesimpulanPage() {
                     value={pledgeName}
                     onChange={(e) => setPledgeName(e.target.value)}
                     placeholder="Masukkan nama Anda"
-                    className="bg-white dark:bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-red-500"
+                    className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-700 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-red-500 focus:ring-red-500"
+                    disabled={isSubmitting}
                   />
                 </div>
 
-                <div className="bg-white dark:bg-slate-950 rounded-lg p-4 border-l-4 border-red-500 space-y-3">
-                  <p className="text-sm font-semibold text-slate-200">Saya berkomitmen untuk:</p>
-                  <ul className="text-sm text-slate-300 space-y-1">
+                <div className="bg-slate-50 dark:bg-slate-950 rounded-lg p-4 border border-slate-200 dark:border-slate-800 border-l-4 border-l-red-500 space-y-3">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-200">Saya berkomitmen untuk:</p>
+                  <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1">
                     <li>✓ Memeriksa kebenaran sebelum membagikan informasi</li>
                     <li>✓ Berbicara dengan santun di media sosial</li>
                     <li>✓ Menghormati pendapat yang berbeda</li>
@@ -133,15 +184,25 @@ export default function KesimpulanPage() {
 
                 <Button
                   type="submit"
+                  disabled={isSubmitting}
                   className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center justify-center gap-2"
                 >
-                  <Send className="w-4 h-4" />
-                  Saya Berkomitmen
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Menyimpan...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      Saya Berkomitmen
+                    </>
+                  )}
                 </Button>
 
                 {submitted && (
-                  <div className="bg-green-950/30 border border-green-500/50 rounded-lg p-3 text-center">
-                    <p className="text-green-400 text-sm font-semibold">
+                  <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/50 rounded-lg p-3 text-center">
+                    <p className="text-emerald-700 dark:text-emerald-300 text-sm font-semibold">
                       ✓ Terima kasih! Komitmen Anda telah tercatat.
                     </p>
                   </div>
@@ -151,61 +212,74 @@ export default function KesimpulanPage() {
           </Card>
 
           {/* Pledge List */}
-          <Card className="bg-slate-900 border-slate-800">
-            <CardHeader className="bg-slate-800">
-              <CardTitle className="flex items-center gap-2 text-slate-100">
+          <Card className="bg-white border-slate-200 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:shadow-none overflow-hidden">
+            <CardHeader className="border-b border-slate-200 dark:border-slate-800">
+              <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
                 <Users className="w-5 h-5 text-red-500" />
                 Netizen Bijak Kami ({pledges.length})
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent>
               {isLoading ? (
-                <div className="text-center py-8 text-slate-400">
+                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
                   <p>Memuat data...</p>
                 </div>
               ) : pledges.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-slate-400">Jadilah yang pertama berkomitmen</p>
+                  <p className="text-slate-500 dark:text-slate-400">Jadilah yang pertama berkomitmen</p>
                 </div>
               ) : (
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-2 max-h-80 overflow-y-auto scrollbar-minimal pr-1">
                   {pledges.map((name, idx) => (
                     <div
                       key={idx}
-                      className="bg-white dark:bg-slate-950 rounded-lg p-3 border border-slate-800 hover:border-red-500/30 transition-colors flex items-center gap-2"
+                      className="bg-slate-50 dark:bg-slate-950 rounded-lg p-3 border border-slate-200 dark:border-slate-800 hover:border-red-500/50 dark:hover:border-red-500/30 transition-colors flex items-center gap-2"
                     >
                       <Heart className="w-4 h-4 text-red-500 flex-shrink-0" />
-                      <span className="text-slate-200 text-sm">{name}</span>
+                      <span className="text-slate-800 dark:text-slate-200 text-sm">{name}</span>
                     </div>
                   ))}
                 </div>
               )}
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
 
         {/* Final Message */}
-        <div className="mt-12 bg-slate-900 border border-slate-800 rounded-lg p-8 text-center space-y-4">
-          <h3 className="text-2xl font-bold text-slate-100">
-            Masa Depan Digital Ada di Tangan Kita
-          </h3>
-          <p className="text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            Setiap keputusan untuk memeriksa informasi, setiap pilihan untuk berbicara santun, 
-            dan setiap komitmen untuk jujur—itu membuat perbedaan. Bersama kita bisa membangun 
-            Indonesia digital yang lebih sehat, lebih bijak, dan lebih persatuan.
-          </p>
-          <p className="text-red-400 font-semibold italic pt-4">
-            &quot;Saring Sebelum Sharing - Untuk Indonesia yang Lebih Baik&quot;
-          </p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mb-12"
+        >
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-8 text-center space-y-4 shadow-sm dark:shadow-none">
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Masa Depan Digital Ada di Tangan Kita
+            </h3>
+            <p className="text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
+              Setiap keputusan untuk memeriksa informasi, setiap pilihan untuk berbicara santun,
+              dan setiap komitmen untuk jujur—itu membuat perbedaan. Bersama kita bisa membangun
+              Indonesia digital yang lebih sehat, lebih bijak, dan lebih persatuan.
+            </p>
+            <p className="text-red-600 dark:text-red-400 font-semibold italic pt-4">
+              &quot;Saring Sebelum Sharing - Untuk Indonesia yang Lebih Baik&quot;
+            </p>
+          </div>
+        </motion.div>
 
         {/* Resources */}
-        <div className="mt-12 grid sm:grid-cols-2 gap-6">
-          <Card className="bg-slate-900 border-slate-800">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="grid sm:grid-cols-2 gap-6"
+        >
+          <Card className="bg-white border-slate-200 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:shadow-none">
             <CardHeader>
-              <CardTitle className="text-slate-100">Lanjutkan Belajar</CardTitle>
+              <CardTitle className="text-slate-900 dark:text-slate-100">Lanjutkan Belajar</CardTitle>
             </CardHeader>
-            <CardContent className="text-slate-300 text-sm space-y-2">
+            <CardContent className="text-slate-600 dark:text-slate-300 text-sm space-y-2">
               <p>📚 Pelajari fenomena digital lebih dalam</p>
               <p>📖 Pahami nilai-nilai Pancasila dalam kehidupan sehari-hari</p>
               <p>🔍 Praktik cek hoaks secara rutin</p>
@@ -213,18 +287,18 @@ export default function KesimpulanPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-slate-800">
+          <Card className="bg-white border-slate-200 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:shadow-none">
             <CardHeader>
-              <CardTitle className="text-slate-100">Sumber Terpercaya</CardTitle>
+              <CardTitle className="text-slate-900 dark:text-slate-100">Sumber Terpercaya</CardTitle>
             </CardHeader>
-            <CardContent className="text-slate-300 text-sm space-y-2">
+            <CardContent className="text-slate-600 dark:text-slate-300 text-sm space-y-2">
               <p>✓ Turnbackhoax.id - Fact-checking Indonesia</p>
               <p>✓ Mafindo - Masyarakat Anti Fitnah Indonesia</p>
               <p>✓ Kominfo RI - Edukasi Digital</p>
               <p>✓ Kemendikbudristek - Program Literasi</p>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </div>
     </div>
   )

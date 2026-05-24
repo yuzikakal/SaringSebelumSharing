@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion' // Tambahkan import ini
 import { ThemeToggle } from '@/components/theme-toggle'
 
 const navLinks = [
@@ -11,6 +12,7 @@ const navLinks = [
   { label: 'Fenomena', href: '/fenomena' },
   { label: 'Nilai Pancasila', href: '/nilai-pancasila' },
   { label: 'Cek Hoaks', href: '/cek-hoaks' },
+  { label: 'Suara Netizen', href: '/suara-netizen' },
   { label: 'Kesimpulan', href: '/kesimpulan' },
 ]
 
@@ -27,7 +29,6 @@ export default function Navbar() {
     const baseClasses = 'px-3 py-2 rounded-md text-sm font-medium transition-colors'
 
     if (isActive(href)) {
-      // Light: Teks merah gelap, bg merah pucat. Dark: Teks merah terang, bg gelap.
       return `${baseClasses} text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-950 font-semibold`
     }
 
@@ -50,7 +51,7 @@ export default function Navbar() {
 
           <div className="flex flex-row">
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -62,12 +63,12 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* Theme Toggle & Mobile Menu */}
+            {/* Theme Toggle & Mobile Menu Button */}
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 aria-expanded={isOpen}
                 aria-label="Toggle menu"
               >
@@ -77,21 +78,31 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden pb-4 space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={`block ${getLinkClasses(link.href)}`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        )}
+        {/* Mobile Navigation dengan Animasi */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="lg:hidden overflow-hidden" // overflow-hidden wajib agar animasi height jalan
+            >
+              <div className="pb-4 space-y-1 pt-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`block ${getLinkClasses(link.href)}`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </header>
   )

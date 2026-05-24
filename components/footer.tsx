@@ -2,11 +2,9 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    // Light: bg putih pucat & border terang. Dark: bg gelap & border gelap.
     <footer className="bg-slate-50 border-t border-slate-200 dark:bg-slate-950 dark:border-slate-800 transition-colors duration-300">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         
-        {/* Grid standar 3 kolom, lebih rapi dari [1fr_auto_1fr] */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           
           {/* About Section */}
@@ -17,8 +15,8 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links - Ganti <a> jadi <Link> */}
-          <div className="space-y-4">
+          {/* Quick Links */}
+          <div className="space-y-4 px-0 lg:px-20">
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Menu</h3>
             <ul className="space-y-2 text-sm">
               <li>
@@ -41,6 +39,16 @@ export default function Footer() {
                   Cek Hoaks
                 </Link>
               </li>
+              <li>
+                <Link href="/suara-netizen" className="text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 transition-colors">
+                  Suara Netizen
+                </Link>
+              </li>
+              <li>
+                <Link href="/kesimpulan" className="text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 transition-colors">
+                  Kesimpulan
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -49,14 +57,13 @@ export default function Footer() {
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Informasi</h3>
             <div className="text-sm space-y-2 text-slate-600 dark:text-slate-400">
               <p className="font-semibold text-slate-800 dark:text-slate-200">Dikembangkan oleh: Walady Yuzika Kal Zamzami</p>
-              <p>Program Studi: Teknologi Rekayasa Perangkat Lunak (TRPL)</p>
-              <p>Kampus: Politeknik Negeri Medan (POLMED)</p>
-              <p>Tugas Mata Kuliah: Pendidikan Pancasila - Era Digital</p>
+              <p>Program Studi: Teknologi Rekayasa Perangkat Lunak</p>
+              <p>Kampus: Politeknik Negeri Medan</p>
+              <p>Tugas Mata Kuliah: Pendidikan Pancasila</p>
             </div>
           </div>
         </div>
 
-        {/* Copyright - Div kosong yang tidak berguna sudah dihapus */}
         <div className="border-t border-slate-200 dark:border-slate-800 pt-8">
           <p className="text-center text-sm text-slate-500 dark:text-slate-500">
             &copy; {new Date().getFullYear()} Saring Sebelum Sharing. Semua hak dilindungi.
