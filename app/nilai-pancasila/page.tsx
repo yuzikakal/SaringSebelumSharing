@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion'
 import { 
-  Heart, Users, Handshake, Shield, Globe, 
+  Star, Users, Handshake, Shield, Globe, 
   Flame, MessageSquare, Ear, Swords, ShieldCheck 
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,25 +11,25 @@ import { Card, CardContent } from '@/components/ui/card'
 export default function NilaiPancasilaPage() {
   const principles = [
     {
-      icon: Heart,
+      icon: Star,
       title: 'Sila 1: Ketuhanan Yang Maha Esa',
       description: 'Menghormati keberagaman agama dan kepercayaan dengan berbicara santun di media sosial.',
       digital: 'Jangan gunakan agama untuk menyerang orang lain online.',
-      image: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=800&h=600&fit=crop&q=80',
+      image: 'https://cdns.klimg.com/resized/646x323/p/headline/nama-agama-dan-tempat-iba-ca15b37f1bcc.jpg',
     },
     {
       icon: Users,
       title: 'Sila 2: Kemanusiaan Yang Adil dan Beradab',
       description: 'Memperlakukan setiap individu dengan martabat dan menghindari ujaran kebencian.',
       digital: 'Hormati hak asasi setiap netizen tanpa terkecuali.',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&h=600&fit=crop&q=80',
+      image: 'https://asset.kompas.com/crops/fGt13_v0Xm4dyv5qGwPrZBjQeRQ=/0x47:1440x1007/750x500/data/photo/2022/10/10/6344013333a57.png',
     },
     {
       icon: Globe,
       title: 'Sila 3: Persatuan Indonesia',
       description: 'Menjaga persatuan bangsa melalui informasi yang akurat dan berbicara yang bijak. Sila ini menjadi fondasi utama melawan hoaks.',
       digital: 'Cek hoaks agar tidak memecah belah bangsa kita.',
-      image: 'https://images.unsplash.com/photo-1512632578888-169bbbc64f33?w=1600&h=800&fit=crop&q=80',
+      image: 'https://cdn1-production-images-kly.akamaized.net/HheW7VbZluLsa4aGaD28F60kXZ8=/1280x720/smart/filters:quality(75):strip_icc()/kly-media-production/medias/5149330/original/092314500_1740985159-1740981585697_contoh-makna-sila-ke-3.jpg',
       featured: true,
     },
     {
@@ -37,7 +37,7 @@ export default function NilaiPancasilaPage() {
       title: 'Sila 4: Kerakyatan Dipimpin Bijaksana',
       description: 'Mengutamakan musyawarah dan memberikan ruang suara untuk semua dengan menghargai perbedaan.',
       digital: 'Dengarkan pendapat berbeda, jangan langsung serang.',
-      image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&h=600&fit=crop&q=80',
+      image: 'https://images.hukumonline.com/frontend/lt66fb9f5891944/lt66fba36af2d53.jpg',
     },
     {
       icon: Shield,
