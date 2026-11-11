@@ -20,7 +20,6 @@ export function ThemeToggle() {
         size="icon"
         className="w-10 h-10 rounded-md"
         aria-label="Toggle theme"
-        disabled
       >
         <Sun className="h-5 w-5 text-slate-400" />
       </Button>

@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { NextRequest, NextResponse } from 'next/server'
 
 interface CheckNewsResponse {
@@ -8,107 +8,87 @@ interface CheckNewsResponse {
   sumber_valid: Array<{ judul_sumber: string; url_sumber: string }>
 }
 
-// Fallback pattern matching for when API is unavailable
-const hoaxPatterns = [
-  { regex: /garam.*covid|salt.*cure/i, score: 5, type: 'hoaks' as const },
-  { regex: /microchip.*vaksin|vaccine.*tracking/i, score: 10, type: 'hoaks' as const },
-  { regex: /5g.*covid|5g.*virus/i, score: 8, type: 'hoaks' as const },
-  { regex: /urin.*covid|urine.*cure/i, score: 9, type: 'hoaks' as const },
-  { regex: /sinar uv.*covid|ultraviolet.*kill.*virus/i, score: 7, type: 'hoaks' as const },
-  { regex: /obat.*covid.*gratis|cure.*all.*covid/i, score: 6, type: 'hoaks' as const },
-]
-
-function analyzeTextFallback(text: string): CheckNewsResponse {
-  const lowerText = text.toLowerCase()
-  let maxHoaksScore = 0
-
-  for (const pattern of hoaxPatterns) {
-    if (pattern.regex.test(text)) {
-      maxHoaksScore = Math.max(maxHoaksScore, pattern.score)
-    }
-  }
-
-  let status: 'HOAKS' | 'FAKTA' | 'MERAGUKAN' = 'MERAGUKAN'
-  let skor_kepercayaan = 50
-  let kesimpulan = ''
-  let sumber_valid: Array<{ judul_sumber: string; url_sumber: string }> = []
-
-  if (maxHoaksScore > 5) {
-    status = 'HOAKS'
-    skor_kepercayaan = Math.max(10, 30 - maxHoaksScore * 2)
-    kesimpulan = `Klaim ini terdeteksi sebagai HOAKS. Informasi yang Anda bagikan tidak berdasarkan bukti ilmiah yang valid dan dapat menyesatkan masyarakat.`
-    sumber_valid = [
-      { judul_sumber: 'Kementerian Kesehatan RI', url_sumber: 'www.kemkes.go.id' },
-      { judul_sumber: 'Fact Checking Indonesia', url_sumber: 'turnbackhoax.id' },
-    ]
-  } else {
-    kesimpulan = `Klaim ini memerlukan verifikasi lebih lanjut. Silakan cari sumber kredibel tambahan sebelum berbagi.`
-    sumber_valid = [
-      { judul_sumber: 'Fact Checking Indonesia', url_sumber: 'turnbackhoax.id' },
-      { judul_sumber: 'Cek Fakta Kompas', url_sumber: 'cekfakta.com' },
-    ]
-  }
-
-  return {
-    status,
-    skor_kepercayaan: Math.min(100, Math.max(0, skor_kepercayaan)),
-    kesimpulan,
-    sumber_valid,
-  }
-}
-
 async function analyzeWithGemini(inputUser: string): Promise<CheckNewsResponse> {
-  const apiKey = process.env.GOOGLE_API_KEY
+  const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     throw new Error('API key not configured')
   }
 
-  const client = new GoogleGenerativeAI(apiKey)
-  const model = client.getGenerativeModel({
-    model: 'gemini-3.8-flash',
+  const ai = new GoogleGenAI({
+    apiKey,
+    httpOptions: { apiVersion: 'v1beta', timeout: 30_000 },
   })
 
-  const prompt = `Anda adalah ahli verifikasi fakta dan deteksi hoaks dari Indonesia. Analisis klaim berikut dengan cermat.
+  const prompt = `Anda adalah ahli verifikasi fakta dan deteksi hoaks dari Indonesia. Analisis klaim berikut:
+Klaim: "${inputUser}"
 
-Klaim yang akan dianalisis:
-"${inputUser}"
+Tentukan apakah klaim HOAKS, FAKTA, atau MERAGUKAN. Jangan mengarang sumber atau URL; gunakan sumber kredibel yang benar-benar relevan. Berikan kesimpulan singkat dalam bahasa Indonesia.`
 
-Tentukan apakah klaim ini adalah:
-1. HOAKS - Informasi yang salah atau menyesatkan
-2. FAKTA - Informasi yang benar dan dapat diverifikasi
-3. MERAGUKAN - Informasi yang memerlukan verifikasi lebih lanjut
+  const interaction = await ai.interactions.create({
+    model: 'gemini-3.8-flash',
+    input: prompt,
+    response_format: {
+      type: 'text',
+      mime_type: 'application/json',
+      schema: {
+        type: 'object',
+        properties: {
+          status: { type: 'string', enum: ['HOAKS', 'FAKTA', 'MERAGUKAN'] },
+          skor_kepercayaan: { type: 'integer', minimum: 0, maximum: 100 },
+          kesimpulan: { type: 'string' },
+          sumber_valid: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                judul_sumber: { type: 'string' },
+                url_sumber: { type: 'string' },
+              },
+              required: ['judul_sumber', 'url_sumber'],
+            },
+          },
+        },
+        required: ['status', 'skor_kepercayaan', 'kesimpulan', 'sumber_valid'],
+      },
+    },
+  }, {
+    timeout_ms: 30_000,
+    retries: { strategy: 'none' },
+  })
 
-Berikan respons HANYA dalam format JSON yang valid (tanpa teks tambahan):
-{
-  "status": "HOAKS" atau "FAKTA" atau "MERAGUKAN",
-  "skor_kepercayaan": angka antara 0-100,
-  "kesimpulan": "Penjelasan singkat 2-3 kalimat dalam bahasa Indonesia",
-  "sumber_valid": [
-    {"judul_sumber": "Nama sumber", "url_sumber": "URL atau organisasi"}
-  ]
-}`
-
-  const result = await model.generateContent(prompt)
-  const responseText = result.response.text()
-
-  // Extract JSON from response
-  const jsonMatch = responseText.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) {
-    throw new Error('Invalid response format from API')
+  if (!interaction.output_text) {
+    throw new Error('Gemini mengembalikan respons kosong')
   }
 
-  const parsed = JSON.parse(jsonMatch[0])
-  
-  // Validate response
-  if (!['HOAKS', 'FAKTA', 'MERAGUKAN'].includes(parsed.status)) {
-    throw new Error('Invalid status in response')
+  const parsed: unknown = JSON.parse(interaction.output_text)
+  if (typeof parsed !== 'object' || parsed === null) {
+    throw new Error('Respons Gemini bukan objek JSON')
   }
+
+  const data = parsed as Record<string, unknown>
+  if (
+    !['HOAKS', 'FAKTA', 'MERAGUKAN'].includes(data.status as string) ||
+    typeof data.skor_kepercayaan !== 'number' ||
+    !Number.isFinite(data.skor_kepercayaan) ||
+    typeof data.kesimpulan !== 'string' ||
+    !Array.isArray(data.sumber_valid)
+  ) {
+    throw new Error('Struktur respons Gemini tidak sesuai')
+  }
+
+  const sumber_valid = data.sumber_valid.filter(
+    (source): source is { judul_sumber: string; url_sumber: string } =>
+      typeof source === 'object' &&
+      source !== null &&
+      typeof (source as Record<string, unknown>).judul_sumber === 'string' &&
+      typeof (source as Record<string, unknown>).url_sumber === 'string',
+  )
 
   return {
-    status: parsed.status,
-    skor_kepercayaan: Math.min(100, Math.max(0, parsed.skor_kepercayaan)),
-    kesimpulan: parsed.kesimpulan,
-    sumber_valid: parsed.sumber_valid || [{ judul_sumber: 'Analisis Gemini', url_sumber: 'Google AI' }],
+    status: data.status as CheckNewsResponse['status'],
+    skor_kepercayaan: Math.min(100, Math.max(0, data.skor_kepercayaan)),
+    kesimpulan: data.kesimpulan,
+    sumber_valid,
   }
 }
 
@@ -124,14 +104,46 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Try to use Gemini API first, fallback to pattern matching
     try {
       const result = await analyzeWithGemini(inputUser)
       return NextResponse.json(result)
     } catch (apiError) {
-      console.log('[v0] Gemini API error, using fallback:', apiError)
-      const fallbackResult = analyzeTextFallback(inputUser)
-      return NextResponse.json(fallbackResult)
+      const statusCode =
+        typeof apiError === 'object' && apiError !== null && 'statusCode' in apiError
+          ? apiError.statusCode
+          : undefined
+      const headers =
+        typeof apiError === 'object' && apiError !== null && 'headers' in apiError
+          ? apiError.headers
+          : undefined
+
+      if (statusCode === 429) {
+        const retryAfter = headers instanceof Headers ? headers.get('retry-after') : null
+        const retryAfterSeconds = retryAfter ? Number.parseInt(retryAfter, 10) : NaN
+        const waitMessage = Number.isFinite(retryAfterSeconds)
+          ? ` Coba lagi dalam sekitar ${Math.ceil(retryAfterSeconds / 60)} menit.`
+          : ' Silakan coba lagi nanti.'
+
+        console.warn('Gemini rate limit reached', { retryAfterSeconds })
+        return NextResponse.json(
+          { error: `Kuota Gemini sedang habis.${waitMessage}` },
+          {
+            status: 429,
+            ...(Number.isFinite(retryAfterSeconds)
+              ? { headers: { 'Retry-After': String(retryAfterSeconds) } }
+              : {}),
+          },
+        )
+      }
+
+      console.error(
+        'Gemini API request failed:',
+        apiError instanceof Error ? apiError.message : 'Unknown error',
+      )
+      return NextResponse.json(
+        { error: 'Layanan verifikasi sedang bermasalah. Silakan coba lagi sebentar.' },
+        { status: 502 },
+      )
     }
   } catch (error) {
     console.error('Error in check-news API:', error)

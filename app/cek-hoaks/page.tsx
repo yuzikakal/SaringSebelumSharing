@@ -39,17 +39,13 @@ export default function CekHoaksPage() {
         body: JSON.stringify({ inputUser: input }),
       })
 
-      if (!response.ok) {
-        throw new Error('Terjadi kesalahan saat memproses permintaan')
+      const data = await response.json()
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error ?? 'Terjadi kesalahan saat memproses permintaan')
       }
 
-      const data = await response.json()
-      
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setResult(data)
-      }
+      setResult(data)
     } catch (err) {
       setError(
         err instanceof Error
