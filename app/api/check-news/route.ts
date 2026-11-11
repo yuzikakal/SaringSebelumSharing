@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 import { NextRequest, NextResponse } from 'next/server'
 
 interface CheckNewsResponse {
@@ -16,21 +16,22 @@ async function analyzeWithGemini(inputUser: string): Promise<CheckNewsResponse> 
 
   const ai = new GoogleGenAI({
     apiKey,
-    httpOptions: { apiVersion: 'v1beta', timeout: 30_000 },
+    httpOptions: { apiVersion: 'v1beta', timeout: 60_000 },
   })
 
   const prompt = `Anda adalah ahli verifikasi fakta dan deteksi hoaks dari Indonesia. Analisis klaim berikut:
 Klaim: "${inputUser}"
 
-Tentukan apakah klaim HOAKS, FAKTA, atau MERAGUKAN. Jangan mengarang sumber atau URL; gunakan sumber kredibel yang benar-benar relevan. Berikan kesimpulan singkat dalam bahasa Indonesia.`
+Tentukan apakah klaim HOAKS, FAKTA, atau MERAGUKAN. Jangan mengarang sumber atau URL; jika sumber relevan tidak dapat dipastikan, kembalikan sumber_valid sebagai array kosong. Berikan kesimpulan singkat dalam bahasa Indonesia.`
 
-  const interaction = await ai.interactions.create({
-    model: 'gemini-3.8-flash',
-    input: prompt,
-    response_format: {
-      type: 'text',
-      mime_type: 'application/json',
-      schema: {
+  const response = await ai.models.generateContent({
+    model: 'gemini-3.5-flash-lite',
+    contents: prompt,
+    config: {
+      maxOutputTokens: 512,
+      responseMimeType: 'application/json',
+      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+      responseSchema: {
         type: 'object',
         properties: {
           status: { type: 'string', enum: ['HOAKS', 'FAKTA', 'MERAGUKAN'] },
@@ -50,17 +51,15 @@ Tentukan apakah klaim HOAKS, FAKTA, atau MERAGUKAN. Jangan mengarang sumber atau
         },
         required: ['status', 'skor_kepercayaan', 'kesimpulan', 'sumber_valid'],
       },
+      httpOptions: { timeout: 60_000 },
     },
-  }, {
-    timeout_ms: 30_000,
-    retries: { strategy: 'none' },
   })
 
-  if (!interaction.output_text) {
+  if (!response.text) {
     throw new Error('Gemini mengembalikan respons kosong')
   }
 
-  const parsed: unknown = JSON.parse(interaction.output_text)
+  const parsed: unknown = JSON.parse(response.text)
   if (typeof parsed !== 'object' || parsed === null) {
     throw new Error('Respons Gemini bukan objek JSON')
   }
@@ -111,6 +110,8 @@ export async function POST(request: NextRequest) {
       const statusCode =
         typeof apiError === 'object' && apiError !== null && 'statusCode' in apiError
           ? apiError.statusCode
+          : typeof apiError === 'object' && apiError !== null && 'status' in apiError
+            ? apiError.status
           : undefined
       const headers =
         typeof apiError === 'object' && apiError !== null && 'headers' in apiError
@@ -133,6 +134,14 @@ export async function POST(request: NextRequest) {
               ? { headers: { 'Retry-After': String(retryAfterSeconds) } }
               : {}),
           },
+        )
+      }
+
+      if (statusCode === 504) {
+        console.warn('Gemini request exceeded the upstream deadline')
+        return NextResponse.json(
+          { error: 'Gemini sedang lambat merespons. Silakan coba lagi sebentar.' },
+          { status: 504 },
         )
       }
 
