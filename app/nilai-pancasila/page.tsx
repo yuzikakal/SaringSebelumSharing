@@ -15,7 +15,7 @@ export default function NilaiPancasilaPage() {
       title: 'Sila 1: Ketuhanan Yang Maha Esa',
       description: 'Menghormati keberagaman agama dan kepercayaan dengan berbicara santun di media sosial.',
       digital: 'Jangan gunakan agama untuk menyerang orang lain online.',
-      image: 'https://cdns.klimg.com/resized/646x323/p/headline/nama-agama-dan-tempat-iba-ca15b37f1bcc.jpg',
+      image: 'https://suaramuslim.net/wp-content/uploads/2026/09/Islam-ala-Prabowo.jpeg',
     },
     {
       icon: Users,
